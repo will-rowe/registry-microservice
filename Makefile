@@ -20,7 +20,7 @@ test:
 
 build: proto
 		go mod tidy
-		go build -o ./bin/registry .
+		CGO_ENABLED=0 go build -o ./bin/registry .
 
 pack: build
 		docker build -t willrowe/registry-service:latest .
