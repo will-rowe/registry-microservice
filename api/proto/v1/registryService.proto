@@ -1,0 +1,127 @@
+syntax = "proto3";
+package v1;
+option go_package = "api/v1";
+
+import "google/protobuf/timestamp.proto";
+
+// RegistryService manages CRUD operations for study participants.
+service RegistryService {
+
+    // Create a new participant
+    rpc Create(CreateRequest) returns (CreateResponse);
+
+    // Retrieve participant from registry
+    rpc Retrieve(RetrieveRequest) returns (RetrieveResponse);
+
+    // Update participant details
+    rpc Update(UpdateRequest) returns (UpdateResponse);
+
+    // Delete participant from registry
+    rpc Delete(DeleteRequest) returns (DeleteResponse);
+
+}
+
+// Participant describes a study participant
+// that needs to be recorded in the registry.
+message Participant {
+
+    // unique string reference number for the participant
+    string id = 1;
+
+    // date of birth
+    google.protobuf.Timestamp dob = 2;
+
+    // phone number
+    string phone = 3;
+
+    // address
+    string address = 4;
+}
+
+// CreateRequest will request a participant is created
+// in the registry.
+message CreateRequest{
+
+    // api version
+    string api_version = 1;
+
+    // participant to create
+    Participant participant = 2;
+}
+
+// CreateResponse contains the status of
+// the create operation.
+message CreateResponse{
+
+    // api version
+    string api_version = 1;
+
+    // created is true if participant was created
+    bool created = 2;
+}
+
+// RetrieveRequest will request a participant
+// from the registry using the provided id.
+message RetrieveRequest{
+
+    // api version
+    string api_version = 1;
+
+    // unique string reference number for the requested participant
+    string id = 2;
+}
+
+// RetrieveResponse contains the participant data
+// held in the registry.
+message RetrieveResponse{
+
+    // api version
+    string api_version = 1;
+
+    // participant to return
+    Participant participant = 2;
+}
+
+// UpdateRequest will request a participant to
+// be updated in the registry.
+message UpdateRequest{
+
+    // api version
+    string api_version = 1;
+
+    // participant to update
+    Participant participant = 2;
+}
+
+// UpdateResponse contains the status of 
+// the update operation.
+message UpdateResponse{
+
+    // api version
+    string api_version = 1;
+
+    // updated is true if participant was updated
+    bool updated = 2;
+}
+
+// DeleteRequest will request a participant to
+// be deleted in the registry.
+message DeleteRequest{
+
+    // api version
+    string api_version = 1;
+
+    // unique string reference number for the requested participant
+    string id = 2;
+}
+
+// DeleteResponse contains the status of
+// the delete operation.
+message DeleteResponse{
+
+    // api version
+    string api_version = 1;
+
+    // deleted is true if participant was deleted
+    bool deleted = 2;
+}
