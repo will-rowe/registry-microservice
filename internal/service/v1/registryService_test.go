@@ -158,6 +158,6 @@ func TestDB(t *testing.T) {
 	}
 	req2 := &api.DeleteRequest{ApiVersion: apiVersion, Id: "fake id"}
 	if _, err := rs.Delete(context.Background(), req2); err == nil {
-		t.Fatal("non-existant participant removed from db")
+		t.Fatal("non-existent participant removed from db")
 	}
 }
