@@ -23,13 +23,13 @@ build: proto
 		CGO_ENABLED=0 go build -o ./bin/registry .
 
 pack: build
-		docker build -t willrowe/registry-service:latest .
+		docker build -t willrowe/registry-microservice:latest .
 
 push:
-		docker push willrowe/registry-service:latest
+		docker push willrowe/registry-microservice:latest
 	
 serve:
-		docker run -p 9090:9090 willrowe/registry-service
+		docker run -p 9090:9090 willrowe/registry-microservice
 
 clean:
 		rm -r bin
