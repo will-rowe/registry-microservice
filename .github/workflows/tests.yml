@@ -55,8 +55,5 @@ jobs:
 
       - name: Run
         run: |
-          ./bin/registry serve &
-          printf "123456\nan address\n2020-01-01\n" > test-data.txt
-          cat test-data.txt | ./bin/registry client -r create KFG-734
-          ./bin/registry client -r retrieve KFG-734
-          ./bin/registry client -r delete KFG-734
+          ./bin/registry serve -h
+          ./bin/registry client -h

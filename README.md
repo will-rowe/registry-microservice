@@ -40,7 +40,7 @@ As it is currently a minimal working example, the standard libary has been used 
 
 * command line interface
 
-For simplicity, I've elected to use STDIN to collect participant information from the user. Once a user specifies the request type (create|retrieve|update|delete) and provides the participant reference number in the command invocation, the remainder of the information will be collected from the user via prompts. This is simple and quick but not very versatile or robust. I've included some basic checking of input but it is not ideal. Future iterations of the tool would allow serialised data to be passed/piped into the tool and there would also be more validation prior to formulating and sending requests.
+For simplicity, I've elected to use STDIN to collect participant information from the user. Once a user specifies the request type (create|retrieve|update|delete) and provides the participant reference number in the command invocation, the remainder of the information will be collected from the user via prompts. This is simple and quick but not very versatile or robust. I've included some basic checking of input but it is not ideal. Future iterations of the tool would allow serialised data to be passed/piped into the tool and there would also be more validation prior to formulating and sending requests. For now, you can do the following if you want to skip the prompt: `printf "123456\nhouse 1, street 2, city XYZ\n1999-01-21\n" | registry client -r create KFG-734`
 
 ### Dependencies
 
@@ -110,10 +110,22 @@ registry client -r [request] <participant_reference_number>
 
 The `-r` option supports `create`, `retrieve`, `update` and `delete`.
 
-For example, to retrieve a partcipant from the registry:
+For example, to add a partcipant to the registry:
 
 ```
-registry client -r retrieve REF-123
+printf "123456\nhouse 1, street 2, city XYZ\n1999-01-21\n" | registry client -r create KFG-734
+```
+
+And then to retrieve the information:
+
+```
+registry client -r retrieve KFG-734
+```
+
+And to delete:
+
+```
+registry client -r delete KFG-734
 ```
 
 ### Documentation
