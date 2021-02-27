@@ -15,23 +15,28 @@ import (
 	api "github.com/will-rowe/registry-microservice/pkg/api/v1"
 )
 
+const (
+	// layoutISO is the date format for collecting the DoB from participants
+	layoutISO = "2006-01-02"
+)
+
 // command line arguments
 var (
 	serverAddress *string // address of the server hosting the registry service
 	serverRequest *string // CRUD operation to perform
-	refNum        *string // reference number for the participant
 )
 
 // clientCmd represents the client command
 var clientCmd = &cobra.Command{
-	Use:   "client",
+	Use:   "client -r [create|retrieve|update|delete] <reference_number>",
 	Short: "A client to send requests to the registry server",
 	Long: `Send requests to the registry server using gRPC.
 
 	The client connects to the server and makes a CRUD request
 	for participants held in the registry.`,
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		runClient()
+		runClient(args[0])
 	},
 }
 
@@ -39,7 +44,6 @@ var clientCmd = &cobra.Command{
 func init() {
 	serverAddress = clientCmd.Flags().StringP("serverAddress", "s", fmt.Sprintf("%s:%s", DefaultServerAddress, DefaultgRPCport), "address of the server hosting the registry service")
 	serverRequest = clientCmd.Flags().StringP("request", "r", "", "server request (create|retrieve|update|delete)")
-	refNum = clientCmd.Flags().StringP("refnum", "i", "", "reference number for participant")
 	clientCmd.MarkFlagRequired("request")
 	clientCmd.MarkFlagRequired("refNum")
 	rootCmd.AddCommand(clientCmd)
@@ -56,35 +60,15 @@ func createParticipant(ref string) (*api.Participant, error) {
 	}
 
 	// collect participant data from stdin and add it to the participant
-	fmt.Printf("collecting information for participant (%v)", ref)
-	phone, address := "", ""
-	var day, month, year int
+	fmt.Printf("collecting information for participant (%v)\n", ref)
+	phone, address, dob := "", "", ""
 	fmt.Println("enter phone number:")
 	fmt.Scanln(&phone)
 	fmt.Println("enter address:")
 	fmt.Scanln(&address)
-	fmt.Println("enter birthdate day (DD)")
-	if _, err := fmt.Scanf("%d", &day); err != nil {
-		return nil, fmt.Errorf("could not collect day: %v", err)
-	}
-	if day == 0 || day > 32 {
-		return nil, errors.New("birthdate day invalid")
-	}
-	fmt.Println("enter birthdate month (MM)")
-	if _, err := fmt.Scanf("%d", &month); err != nil {
-		return nil, fmt.Errorf("could not collect day: %v", err)
-	}
-	if month == 0 || month > 12 {
-		return nil, errors.New("birthdate month invalid")
-	}
-	fmt.Println("enter birthdate year (YYYY)")
-	if _, err := fmt.Scanf("%d", &year); err != nil {
-		return nil, fmt.Errorf("could not collect day: %v", err)
-	}
-	if year < 1900 || year > 2021 {
-		return nil, errors.New("birthdate year invalid")
-	}
-	birthdate, err := time.Parse("2021-01-17", fmt.Sprintf("%d-%d-%d", year, month, day))
+	fmt.Println("enter date of birth (YYYY-MM-DD):")
+	fmt.Scanln(&dob)
+	birthdate, err := time.Parse(layoutISO, dob)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +79,7 @@ func createParticipant(ref string) (*api.Participant, error) {
 }
 
 // runClient connects to the client and performs CRUD operation.
-func runClient() {
+func runClient(refNum string) {
 
 	// connect to the gRPC server
 	conn, err := grpc.Dial(*serverAddress, grpc.WithInsecure())
@@ -112,7 +96,7 @@ func runClient() {
 	case "create":
 
 		// create the Participant
-		p, err := createParticipant(*refNum)
+		p, err := createParticipant(refNum)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -135,13 +119,13 @@ func runClient() {
 		if res.Created != true {
 			log.Fatal("create request failed")
 		}
-		log.Printf("create request successful for: %v", *refNum)
+		log.Printf("create request successful for: %v", refNum)
 	case "retrieve":
 
 		// create the retrieve request
 		req := &api.RetrieveRequest{
 			ApiVersion: DefaultAPIVersion,
-			Id:         *refNum,
+			Id:         refNum,
 		}
 
 		// setup context
@@ -156,11 +140,11 @@ func runClient() {
 
 		// print the retrieved data to STDOUT
 		fmt.Fprintln(os.Stdout, res.Participant.String())
-		log.Printf("retrieve request successful for: %v", *refNum)
+		log.Printf("retrieve request successful for: %v", refNum)
 	case "update":
 
 		// create the Participant
-		p, err := createParticipant(*refNum)
+		p, err := createParticipant(refNum)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -183,13 +167,13 @@ func runClient() {
 		if res.Updated != true {
 			log.Fatal("update request failed")
 		}
-		log.Printf("update request successful for: %v", *refNum)
+		log.Printf("update request successful for: %v", refNum)
 	case "delete":
 
 		// create the delete request
 		req := &api.DeleteRequest{
 			ApiVersion: DefaultAPIVersion,
-			Id:         *refNum,
+			Id:         refNum,
 		}
 
 		// setup context
@@ -204,7 +188,7 @@ func runClient() {
 		if res.Deleted != true {
 			log.Fatal("delete request failed")
 		}
-		log.Printf("delete request successful for: %v", *refNum)
+		log.Printf("delete request successful for: %v", refNum)
 	default:
 		log.Fatal("only create|retrieve|update|delete requests are supported")
 	}
