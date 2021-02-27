@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"bufio"
 	"context"
 	"errors"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -61,14 +63,23 @@ func createParticipant(ref string) (*api.Participant, error) {
 
 	// collect participant data from stdin and add it to the participant
 	fmt.Printf("collecting information for participant (%v)\n", ref)
-	phone, address, dob := "", "", ""
-	fmt.Println("enter phone number:")
-	fmt.Scanln(&phone)
-	fmt.Println("enter address:")
-	fmt.Scanln(&address)
-	fmt.Println("enter date of birth (YYYY-MM-DD):")
-	fmt.Scanln(&dob)
-	birthdate, err := time.Parse(layoutISO, dob)
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("enter phone number and press return:")
+	phone, err := reader.ReadString('\n')
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("enter address and press return:")
+	address, err := reader.ReadString('\n')
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("enter date of birth (YYYY-MM-DD) and press return:")
+	dob, err := reader.ReadString('\n')
+	if err != nil {
+		return nil, err
+	}
+	birthdate, err := time.Parse(layoutISO, strings.TrimSuffix(dob, "\n"))
 	if err != nil {
 		return nil, err
 	}
