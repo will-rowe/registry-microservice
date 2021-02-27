@@ -9,8 +9,8 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	"gotest.tools/assert"
 
-	api "github.com/will-rowe/registry-microservice/internal/api/v1"
-	mock "github.com/will-rowe/registry-microservice/internal/mock"
+	api "github.com/will-rowe/registry-microservice/pkg/api/v1"
+	mock "github.com/will-rowe/registry-microservice/pkg/mock"
 )
 
 // newParticipant is a helper function to

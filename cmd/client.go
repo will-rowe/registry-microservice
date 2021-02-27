@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 
-	api "github.com/will-rowe/registry-microservice/internal/api/v1"
+	api "github.com/will-rowe/registry-microservice/pkg/api/v1"
 )
 
 // command line arguments

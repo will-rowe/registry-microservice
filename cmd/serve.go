@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	server "github.com/will-rowe/registry-microservice/internal/protocol/grpc"
-	service "github.com/will-rowe/registry-microservice/internal/service/v1"
+	server "github.com/will-rowe/registry-microservice/pkg/protocol/grpc"
+	service "github.com/will-rowe/registry-microservice/pkg/service/v1"
 )
 
 // command line arguments

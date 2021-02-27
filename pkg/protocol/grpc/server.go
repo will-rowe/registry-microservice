@@ -11,7 +11,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	api "github.com/will-rowe/registry-microservice/internal/api/v1"
+	api "github.com/will-rowe/registry-microservice/pkg/api/v1"
 )
 
 // RunServer runs a gRPC service to publish the registry service.

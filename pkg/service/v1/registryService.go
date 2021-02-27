@@ -5,7 +5,7 @@ import (
 	"context"
 	"sync"
 
-	api "github.com/will-rowe/registry-microservice/internal/api/v1"
+	api "github.com/will-rowe/registry-microservice/pkg/api/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
