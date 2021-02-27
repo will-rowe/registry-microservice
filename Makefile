@@ -1,7 +1,7 @@
 all: proto docs fmt lint vet test build
 
 proto:
-		protoc -I.  --go_out=plugins=grpc:internal api/proto/v1/registryService.proto
+		protoc -I.  --go_out=plugins=grpc:pkg api/proto/v1/registryService.proto
 
 docs:
 		protoc -I. --doc_out=api/docs/v1 --doc_opt=markdown,registryService.md api/proto/v1/registryService.proto	
@@ -16,6 +16,7 @@ vet:
 		go vet ./...
 
 test:
+		mockgen github.com/will-rowe/registry-microservice/pkg/api/v1 RegistryServiceClient > pkg/mock/client_mock.go
 		go test -v ./...
 
 build: proto

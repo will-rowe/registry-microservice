@@ -7,7 +7,7 @@
 
 ## About
 
-This is a basic registry microservice that stores information about study participants. It includes a gRPC API that supports adding, updating, removing and retrieving participant information.
+This is a basic registry microservice that stores information about study participants. It has a gRPC API that supports adding, updating, removing and retrieving participant information and includes a command line application for running a server and client (called `registry`).
 
 ### Considerations/constraints
 
@@ -25,6 +25,10 @@ This implementation is written in Go and tested using versions 1.14, 1.15 and 1.
 * gRPC over REST
 
 The main reason for selecting gRPC for the microservice API is ease of development, particularly with Go. gRPC is also performant and type safe, there is less boilerplate and it is language agnostic. One of the main drawbacks to gRPC over REST is that it has less support. If wanted, we can add REST API server using the gRPC gateway plugin which will save re-implementing the service but will lose some of the benefits of gRPC.
+
+* data model
+
+
 
 * data storage
 
@@ -68,21 +72,25 @@ docker run -p 9090:9090 willrowe/registry-microservice:latest
 
 ### Testing
 
-Unit tests are available for the service implementation. In addition several Go tools are used (Go lint, vet, fmt) to check the codebase. All these can be run using:
+Unit tests are available for the service implementation. In addition several Go tools are used (Go lint, vet, fmt) to check the codebase. All these can be run separately using:
 
 ```
 make test
+make lint
+make vet
 ```
+
+A [Github Action](.github/workflows/tests.yml) is used to run continuous integration testing using the above make commands on linux and mac OS.
 
 To test the gRPC code without having to connect to a real server we use the [mock package](https://github.com/golang/mock); the mock class was generated using:
 
 ```
-mockgen github.com/will-rowe/registry-microservice/internal/api/v1 RegistryServiceClient > internal/mock/client_mock.go
+mockgen github.com/will-rowe/registry-microservice/pkg/api/v1 RegistryServiceClient > pkg/mock/client_mock.go
 ```
 
-### Running
+### Running
 
-The client and server are available in a single binary, `registry`.
+A client and server imlementation of the registry microservice are available in a single binary called `registry`, which will be found in the `./bin` after installation.
 
 To run the server:
 
@@ -98,7 +106,7 @@ registry client -r [request] <participant-id>
 
 The `-r` option supports `create`, `retrieve`, `update` and `delete`.
 
-To retrieve a partcipant from the registry:
+For example, to retrieve a partcipant from the registry:
 
 ```
 registry client -r retrieve REF-123
@@ -113,3 +121,4 @@ API documentation can be found [here](api/docs/v1/registryService.md). Implement
 * basic logging only
 * no entry validation
 * no HTTP/REST support
+* the command line application has basic functionality
