@@ -32,7 +32,7 @@ The data model is described in protobuf [here](api/proto/v1/registryService.prot
 
 * data storage
 
-As persistance isn't required the gRPC server implementation just uses a map of structs to hold participant data, where keys are the participant reference number (string) and the value is the participant data (struct). The server implementation uses a mutex to protect from concurrent RW errors. As a next step, I'd consider adding a simple, perisistant key-value store (such as [badger](https://github.com/dgraph-io/badger) or [bitcask](https://github.com/prologic/bitcask)), before using an ORM (such as [pg](https://github.com/go-pg/pg)) should an iteration on the requirements need a more fully fledged solution for persistence.
+As persistence isn't required the gRPC server implementation just uses a map of structs to hold participant data, where keys are the participant reference number (string) and the value is the participant data (struct). The server implementation uses a mutex to protect from concurrent RW errors. As a next step, I'd consider adding a simple, perisistant key-value store (such as [badger](https://github.com/dgraph-io/badger) or [bitcask](https://github.com/prologic/bitcask)), before using an ORM (such as [pg](https://github.com/go-pg/pg)) should an iteration on the requirements need a more fully fledged solution for persistence.
 
 * logging
 
@@ -105,7 +105,7 @@ registry serve
 To make client requests to a running server:
 
 ```
-registry client -r [request] <participant-id>
+registry client -r [request] <participant_reference_number>
 ```
 
 The `-r` option supports `create`, `retrieve`, `update` and `delete`.
